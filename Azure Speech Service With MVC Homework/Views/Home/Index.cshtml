@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Speech to Text";
+}
+
+<h2 style="text-align: center; margin-bottom: 20px;">Speech to Text</h2>
+
+<div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+    <button id="startRecording"
+            style="padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;">
+        Start Recording
+    </button>
+
+    <div id="transcriptionContainer"
+         style="width: 80%; max-width: 500px; min-height: 150px; border: 2px dashed #ccc; border-radius: 10px; padding: 20px; background-color: #f9f9f9; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-align: center;">
+        <p id="transcriptionResult" style="font-size: 16px; color: #555;">Your transcription will appear here.</p>
+    </div>
+</div>
+
+<script>
+    document.getElementById('startRecording').addEventListener('click', async () => {
+        document.getElementById('startRecording').innerText = "Recording...";
+        document.getElementById('startRecording').style.backgroundColor = "#FF5722";
+
+        try {
+            const response = await fetch('/Home/TranscribeAudio', {
+                method: 'POST',
+            });
+
+            const data = await response.json();
+            document.getElementById('transcriptionResult').innerText = data.recognizedText || "No transcription available.";
+        } catch (error) {
+            document.getElementById('transcriptionResult').innerText = "An error occurred. Please try again.";
+        } finally {
+            document.getElementById('startRecording').innerText = "Start Recording";
+            document.getElementById('startRecording').style.backgroundColor = "#4CAF50";
+        }
+    });
+</script>
+
